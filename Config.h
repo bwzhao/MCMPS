@@ -29,14 +29,14 @@ namespace MCMPS {
     constexpr type_RealVal MATELE_Ising_DIA = 1;
     constexpr type_RealVal MATELE_Ising_OFF = 1;
 
-    constexpr type_RealVal DELTA0 = 0.05;
+    constexpr type_RealVal DELTA0 = 1;
     constexpr type_RealVal DELTA_EXPONENT = 0.75;
     constexpr type_RealVal DELTA_Q= 0.9;
 
     constexpr type_IntVal P_0= 10;
     constexpr type_IntVal F_0= 100;
 
-    constexpr type_IntVal K_MAX = 20;
+    constexpr type_IntVal K_MAX = 8;
 
     const std::vector<std::string> VEC_NAME = {{'E'}};
 

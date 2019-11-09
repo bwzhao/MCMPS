@@ -408,24 +408,27 @@ void MCMPS::Class_Network::Update_Spin_Pair_Sym() {
     const Class_Matrix* ptr_Lmm2_RZ = &this->Matrix_Id;
 
     for (MCMPS::type_NumSite index_count = 0; index_count != PySpace.size() - 1; ++index_count) {
-        auto index_site_0 = index_count;
-        auto index_site_1 = index_count + 1;
+        auto index_site0_0 = index_count;
+        auto index_site1_0 = index_count + 1;
+        auto index_site0_R = PySpace.Get_RSite(index_site0_0);
+        auto index_site1_R = PySpace.Get_RSite(index_site1_0);
 
-        if (index_site_0 == 0){
+        if (index_site0_0 == 0){
             ptr_Lmm1_0 = &this->Matrix_Id;
             ptr_Lmm1_Z = &this->Matrix_Id;
             ptr_Rmp1_R = &this->Matrix_Id;
             ptr_Rmp1_RZ = &this->Matrix_Id;
         }
         else{
-            auto index_site_m1 = index_site_0 - 1;
-            ptr_Lmm1_0 = &Array_L_0[index_site_m1];
-            ptr_Lmm1_Z = &Array_L_Z[index_site_m1];
-            ptr_Rmp1_R = &Array_R_R[PySpace.Get_RSite(index_site_m1)];
-            ptr_Rmp1_RZ = &Array_R_RZ[PySpace.Get_RSite(index_site_m1)];
+            auto index_sitem1_0 = index_site0_0 - 1;
+            auto index_sitem1_R = PySpace.Get_RSite(index_sitem1_0);
+            ptr_Lmm1_0 = &Array_L_0[index_sitem1_0];
+            ptr_Lmm1_Z = &Array_L_Z[index_sitem1_0];
+            ptr_Rmp1_R = &Array_R_R[index_sitem1_R];
+            ptr_Rmp1_RZ = &Array_R_RZ[index_sitem1_R];
         }
 
-        if (PySpace.Get_Spin_0(index_site_0) != PySpace.Get_Spin_0(index_site_1)){
+        if (PySpace.Get_Spin_0(index_site0_0) != PySpace.Get_Spin_0(index_site1_0)){
             if (index_count == PySpace.size() - 2){
                 ptr_Rmp2_0 = &this->Matrix_Id;
                 ptr_Rmp2_Z = &this->Matrix_Id;
@@ -433,40 +436,44 @@ void MCMPS::Class_Network::Update_Spin_Pair_Sym() {
                 ptr_Lmm2_RZ = &this->Matrix_Id;
             }
             else{
-                auto index_site_2 = index_count + 2;
-                ptr_Rmp2_0 = &Array_R_0[index_site_2];
-                ptr_Rmp2_Z = &Array_R_Z[index_site_2];
-                ptr_Lmm2_R = &Array_L_R[PySpace.Get_RSite(index_site_2)];
-                ptr_Lmm2_RZ = &Array_L_RZ[PySpace.Get_RSite(index_site_2)];
+                auto index_site2_0 = index_count + 2;
+                auto index_site2_R = PySpace.Get_RSite(index_site2_0);
+                ptr_Rmp2_0 = &Array_R_0[index_site2_0];
+                ptr_Rmp2_Z = &Array_R_Z[index_site2_0];
+                ptr_Lmm2_R = &Array_L_R[index_site2_R];
+                ptr_Lmm2_RZ = &Array_L_RZ[index_site2_R];
             }
 
             auto Val_WSp_0 = arma::trace((*ptr_Lmm1_0) *
-                                                 this->Get_Tensor_0(index_site_0).Get_Matrix(
-                                                         PySpace.Get_OppoSpin_0(index_site_0)) *
-                                                 this->Get_Tensor_0(index_site_1).Get_Matrix(
-                                                         PySpace.Get_OppoSpin_0(index_site_1)) *
+                                         this->Get_Tensor_0(index_site0_0).Get_Matrix(
+                                                         PySpace.Get_OppoSpin_0(index_site0_0)) *
+                                         this->Get_Tensor_0(index_site1_0).Get_Matrix(
+                                                         PySpace.Get_OppoSpin_0(index_site1_0)) *
                                          (*ptr_Rmp2_0));
+
             auto Val_WSp_Z = arma::trace((*ptr_Lmm1_Z) *
-                                                 this->Get_Tensor_Z(index_site_0).Get_Matrix(
-                                                         PySpace.Get_OppoSpin_Z(index_site_0)) *
-                                                 this->Get_Tensor_Z(index_site_1).Get_Matrix(
-                                                         PySpace.Get_OppoSpin_Z(index_site_1)) *
+                                         this->Get_Tensor_Z(index_site0_0).Get_Matrix(
+                                                         PySpace.Get_OppoSpin_Z(index_site0_0)) *
+                                         this->Get_Tensor_Z(index_site1_0).Get_Matrix(
+                                                         PySpace.Get_OppoSpin_Z(index_site1_0)) *
                                          (*ptr_Rmp2_Z));
+
             auto Val_WSp_R = arma::trace((*ptr_Lmm2_R) *
-                                                 this->Get_Tensor_R(PySpace.Get_RSite(index_site_1)).Get_Matrix(
-                                                         PySpace.Get_OppoSpin_R(PySpace.Get_RSite(index_site_1))) *
-                                                 this->Get_Tensor_R(PySpace.Get_RSite(index_site_0)).Get_Matrix(
-                                                         PySpace.Get_OppoSpin_R(PySpace.Get_RSite(index_site_0))) *
+                                         this->Get_Tensor_R(index_site1_R).Get_Matrix(
+                                                 PySpace.Get_OppoSpin_R(index_site1_R)) *
+                                         this->Get_Tensor_R(index_site0_R).Get_Matrix(
+                                                         PySpace.Get_OppoSpin_R(index_site0_R)) *
                                          (*ptr_Rmp1_R));
+
             auto Val_WSp_RZ = arma::trace((*ptr_Lmm2_RZ) *
-                                                  this->Get_Tensor_RZ(PySpace.Get_RSite(index_site_1)).Get_Matrix(
-                                                          PySpace.Get_OppoSpin_RZ(PySpace.Get_RSite(index_site_1))) *
-                                                  this->Get_Tensor_RZ(PySpace.Get_RSite(index_site_0)).Get_Matrix(
-                                                          PySpace.Get_OppoSpin_RZ(PySpace.Get_RSite(index_site_0))) *
+                                          this->Get_Tensor_RZ(index_site1_R).Get_Matrix(
+                                                          PySpace.Get_OppoSpin_RZ(index_site1_R)) *
+                                          this->Get_Tensor_RZ(index_site0_R).Get_Matrix(
+                                                          PySpace.Get_OppoSpin_RZ(index_site0_R)) *
                                           (*ptr_Rmp1_RZ));
 
             auto Val_WSp = Val_WSp_0 + Val_WSp_Z + Val_WSp_R + Val_WSp_RZ;
-            auto Val_WS = Val_WS_0 +  Val_WS_Z + Val_WS_R + Val_WS_RZ;
+            auto Val_WS = Val_WS_0 + Val_WS_Z + Val_WS_R + Val_WS_RZ;
             auto temp_ratio = Val_WSp * Val_WSp / Val_WS / Val_WS;
 
             // If we accept the change
@@ -476,48 +483,22 @@ void MCMPS::Class_Network::Update_Spin_Pair_Sym() {
                 Val_WS_Z = Val_WSp_Z;
                 Val_WS_RZ = Val_WSp_RZ;
 
-                PySpace.Flip_Spin(index_site_0);
-                PySpace.Flip_Spin(index_site_1);
+                PySpace.Flip_Spin(index_site0_0);
+                PySpace.Flip_Spin(index_site1_0);
             }
         }
-        Array_L_0[index_site_0] = (*ptr_Lmm1_0) * this->Get_Tensor_0(index_site_0).Get_Matrix(
-                PySpace.Get_Spin_0(index_site_0));
-        Array_L_Z[index_site_0] = (*ptr_Lmm1_Z) * this->Get_Tensor_Z(index_site_0).Get_Matrix(
-                PySpace.Get_Spin_Z(index_site_0));
-        Array_R_R[PySpace.Get_RSite(index_site_0)] = this->Get_Tensor_R(PySpace.Get_RSite(index_site_0)).Get_Matrix(
-                PySpace.Get_Spin_R(PySpace.Get_RSite(index_site_0))) * (*ptr_Rmp1_R);
-        Array_R_RZ[PySpace.Get_RSite(index_site_0)] = this->Get_Tensor_RZ(PySpace.Get_RSite(index_site_0)).Get_Matrix(
-                PySpace.Get_Spin_RZ(PySpace.Get_RSite(index_site_0))) * (*ptr_Rmp1_RZ);
+        Array_L_0[index_site0_0] = (*ptr_Lmm1_0) * this->Get_Tensor_0(index_site0_0).Get_Matrix(
+                PySpace.Get_Spin_0(index_site0_0));
+
+        Array_L_Z[index_site0_0] = (*ptr_Lmm1_Z) * this->Get_Tensor_Z(index_site0_0).Get_Matrix(
+                PySpace.Get_Spin_Z(index_site0_0));
+
+        Array_R_R[index_site0_R] = this->Get_Tensor_R(index_site0_R).Get_Matrix(
+                PySpace.Get_Spin_R(index_site0_R)) * (*ptr_Rmp1_R);
+
+        Array_R_RZ[index_site0_R] = this->Get_Tensor_RZ(index_site0_R).Get_Matrix(
+                PySpace.Get_Spin_RZ(index_site0_R)) * (*ptr_Rmp1_RZ);
     }
-    {
-        const MCMPS::type_NumSite index_site_right = PySpace.size() - 1;
-        const MCMPS::type_NumSite index_site_left = 0;
-        Array_L_0[index_site_right] = Array_L_0[index_site_right - 1] *
-                                      this->Get_Tensor_0(index_site_right).Get_Matrix(
-                                              PySpace.Get_Spin_0(index_site_right));
-        Array_L_Z[index_site_right] =  Array_L_Z[index_site_right - 1] *
-                                       this->Get_Tensor_Z(index_site_right).Get_Matrix(
-                                               PySpace.Get_Spin_Z(index_site_right));
-
-        Array_R_R[index_site_left] =
-                this->Get_Tensor_R(index_site_left).Get_Matrix(
-                        PySpace.Get_Spin_R(index_site_left)) * Array_R_R[index_site_left + 1];
-
-        Array_R_RZ[index_site_left] =
-                this->Get_Tensor_RZ(index_site_left).Get_Matrix(
-                        PySpace.Get_Spin_RZ(index_site_left)) * Array_R_RZ[index_site_left + 1];
-
-        Cal_R_0();
-        Cal_R_Z();
-        Cal_L_R();
-        Cal_L_RZ();
-
-        assert(arma::approx_equal(Array_L_0[index_site_right], Array_R_0[0], "absdiff", 0.0002));
-        assert(arma::approx_equal(Array_L_Z[index_site_right], Array_R_Z[0], "absdiff", 0.0002));
-        assert(arma::approx_equal(Array_L_R[index_site_right], Array_R_R[0], "absdiff", 0.0002));
-        assert(arma::approx_equal(Array_L_RZ[index_site_right], Array_R_RZ[0], "absdiff", 0.0002));
-    }
-
     // Then is the pair across the boundary
     {
         const MCMPS::type_NumSite index_site_left = 0;
@@ -559,6 +540,11 @@ void MCMPS::Class_Network::Update_Spin_Pair_Sym() {
                 assert(arma::approx_equal(Array_L_Z[index_site_right], Array_R_Z[0], "absdiff", 0.0002));
                 assert(arma::approx_equal(Array_L_R[index_site_right], Array_R_R[0], "absdiff", 0.0002));
                 assert(arma::approx_equal(Array_L_RZ[index_site_right], Array_R_RZ[0], "absdiff", 0.0002));
+
+                assert(abs(Val_WS_0 - arma::trace(Array_R_0[index_site_left])) <= 0.00001);
+                assert(abs(Val_WS_Z - arma::trace(Array_R_Z[index_site_left])) <= 0.00001);
+                assert(abs(Val_WS_R - arma::trace(Array_R_R[index_site_left])) <= 0.00001);
+                assert(abs(Val_WS_RZ - arma::trace(Array_R_RZ[index_site_left])) <= 0.00001);
             }
             else{
                 // Flip back
@@ -568,15 +554,18 @@ void MCMPS::Class_Network::Update_Spin_Pair_Sym() {
                 Array_L_0[index_site_right] = Array_L_0[index_site_right - 1] *
                         this->Get_Tensor_0(index_site_right).Get_Matrix(
                                 PySpace.Get_Spin_0(index_site_right));
-                Array_L_Z[index_site_right] =  Array_L_Z[index_site_right - 1] *
+
+                Array_L_Z[index_site_right] = Array_L_Z[index_site_right - 1] *
                         this->Get_Tensor_Z(index_site_right).Get_Matrix(
                                 PySpace.Get_Spin_Z(index_site_right));
-                Array_R_R[PySpace.Get_RSite(index_site_right)] =
-                        this->Get_Tensor_R(PySpace.Get_RSite(index_site_right)).Get_Matrix(
-                                PySpace.Get_Spin_R(PySpace.Get_RSite(index_site_right))) * Array_R_R[PySpace.Get_RSite(index_site_right - 1)];
-                Array_R_RZ[PySpace.Get_RSite(index_site_right)] =
-                        this->Get_Tensor_RZ(PySpace.Get_RSite(index_site_right)).Get_Matrix(
-                                PySpace.Get_Spin_RZ(PySpace.Get_RSite(index_site_right))) * Array_R_RZ[PySpace.Get_RSite(index_site_right - 1)];
+
+                Array_R_R[index_site_left] =
+                        this->Get_Tensor_R(index_site_left).Get_Matrix(
+                                PySpace.Get_Spin_R(index_site_left)) * Array_R_R[index_site_left + 1];
+
+                Array_R_RZ[index_site_left] =
+                        this->Get_Tensor_RZ(index_site_left).Get_Matrix(
+                                PySpace.Get_Spin_RZ(index_site_left)) * Array_R_RZ[index_site_left + 1];
 
                 Cal_R_0();
                 Cal_R_Z();
@@ -587,21 +576,26 @@ void MCMPS::Class_Network::Update_Spin_Pair_Sym() {
                 assert(arma::approx_equal(Array_L_Z[index_site_right], Array_R_Z[0], "absdiff", 0.0002));
                 assert(arma::approx_equal(Array_L_R[index_site_right], Array_R_R[0], "absdiff", 0.0002));
                 assert(arma::approx_equal(Array_L_RZ[index_site_right], Array_R_RZ[0], "absdiff", 0.0002));
+
+                assert(abs(Val_WS_0 - arma::trace(Array_R_0[index_site_left])) <= 0.00001);
+                assert(abs(Val_WS_Z - arma::trace(Array_R_Z[index_site_left])) <= 0.00001);
+                assert(abs(Val_WS_R - arma::trace(Array_R_R[index_site_left])) <= 0.00001);
+                assert(abs(Val_WS_RZ - arma::trace(Array_R_RZ[index_site_left])) <= 0.00001);
             }
         }
         else{
             Array_L_0[index_site_right] = Array_L_0[index_site_right - 1] *
-                    this->Get_Tensor_0(index_site_right).Get_Matrix(
-                            PySpace.Get_Spin_0(index_site_right));
+                                          this->Get_Tensor_0(index_site_right).Get_Matrix(
+                                                  PySpace.Get_Spin_0(index_site_right));
             Array_L_Z[index_site_right] =  Array_L_Z[index_site_right - 1] *
-                    this->Get_Tensor_Z(index_site_right).Get_Matrix(
-                            PySpace.Get_Spin_Z(index_site_right));
-            Array_R_R[PySpace.Get_RSite(index_site_right)] =
-                    this->Get_Tensor_R(PySpace.Get_RSite(index_site_right)).Get_Matrix(
-                            PySpace.Get_Spin_R(PySpace.Get_RSite(index_site_right))) * Array_R_R[PySpace.Get_RSite(index_site_right - 1)];
-            Array_R_RZ[PySpace.Get_RSite(index_site_right)] =
-                    this->Get_Tensor_RZ(PySpace.Get_RSite(index_site_right)).Get_Matrix(
-                            PySpace.Get_Spin_RZ(PySpace.Get_RSite(index_site_right))) * Array_R_RZ[PySpace.Get_RSite(index_site_right - 1)];
+                                           this->Get_Tensor_Z(index_site_right).Get_Matrix(
+                                                   PySpace.Get_Spin_Z(index_site_right));
+            Array_R_R[index_site_left] =
+                    this->Get_Tensor_R(index_site_left).Get_Matrix(
+                            PySpace.Get_Spin_R(index_site_left)) * Array_R_R[index_site_left + 1];
+            Array_R_RZ[index_site_left] =
+                    this->Get_Tensor_RZ(index_site_left).Get_Matrix(
+                            PySpace.Get_Spin_RZ(index_site_left)) * Array_R_RZ[index_site_left + 1];
 
             Cal_R_0();
             Cal_R_Z();
@@ -612,15 +606,15 @@ void MCMPS::Class_Network::Update_Spin_Pair_Sym() {
             assert(arma::approx_equal(Array_L_Z[index_site_right], Array_R_Z[0], "absdiff", 0.0002));
             assert(arma::approx_equal(Array_L_R[index_site_right], Array_R_R[0], "absdiff", 0.0002));
             assert(arma::approx_equal(Array_L_RZ[index_site_right], Array_R_RZ[0], "absdiff", 0.0002));
+
+            assert(abs(Val_WS_0 - arma::trace(Array_R_0[index_site_left])) <= 0.00001);
+            assert(abs(Val_WS_Z - arma::trace(Array_R_Z[index_site_left])) <= 0.00001);
+            assert(abs(Val_WS_R - arma::trace(Array_R_R[index_site_left])) <= 0.00001);
+            assert(abs(Val_WS_RZ - arma::trace(Array_R_RZ[index_site_left])) <= 0.00001);
         }
     }
-    const MCMPS::type_NumSite index_site_left = 0;
-    const MCMPS::type_NumSite index_site_right = PySpace.size() - 1;
 
-    assert(arma::approx_equal(Array_L_0[index_site_right], Array_R_0[0], "absdiff", 0.0002));
-    assert(arma::approx_equal(Array_L_Z[index_site_right], Array_R_Z[0], "absdiff", 0.0002));
-    assert(arma::approx_equal(Array_L_R[index_site_right], Array_R_R[0], "absdiff", 0.0002));
-    assert(arma::approx_equal(Array_L_RZ[index_site_right], Array_R_RZ[0], "absdiff", 0.0002));
+
 
     // At the end of the update, both Array_L and Array_R have been calculated.
     // But it seems that is a bug that I have to explicitly calculate them
@@ -776,7 +770,7 @@ void MCMPS::Class_Network::Measure_Heisenberg_Sym() {
     MCMPS::type_RealVal temp_ES_Dia = 0.;
     MCMPS::type_RealVal temp_ES_Off = 0.;
 
-    auto Val_WS = Val_WS_0 +  Val_WS_Z + Val_WS_R + Val_WS_RZ;
+    auto Val_WS = Val_WS_0 + Val_WS_Z + Val_WS_R + Val_WS_RZ;
 
     // Update pairs of spin
     // First for all the pairs except for the last
@@ -790,6 +784,7 @@ void MCMPS::Class_Network::Measure_Heisenberg_Sym() {
 
     const Class_Matrix* ptr_Rmp1_R = &this->Matrix_Id;
     const Class_Matrix* ptr_Lmm2_R = &this->Matrix_Id;
+
     const Class_Matrix* ptr_Rmp1_RZ = &this->Matrix_Id;
     const Class_Matrix* ptr_Lmm2_RZ = &this->Matrix_Id;
 
@@ -834,18 +829,21 @@ void MCMPS::Class_Network::Measure_Heisenberg_Sym() {
                                          this->Get_Tensor_0(index_site_1).Get_Matrix(
                                                  PySpace.Get_OppoSpin_0(index_site_1)) *
                                          (*ptr_Rmp2_0));
+            
             auto Val_WSp_Z = arma::trace((*ptr_Lmm1_Z) *
                                          this->Get_Tensor_Z(index_site_0).Get_Matrix(
                                                  PySpace.Get_OppoSpin_Z(index_site_0)) *
                                          this->Get_Tensor_Z(index_site_1).Get_Matrix(
                                                  PySpace.Get_OppoSpin_Z(index_site_1)) *
                                          (*ptr_Rmp2_Z));
+            
             auto Val_WSp_R = arma::trace((*ptr_Lmm2_R) *
                                          this->Get_Tensor_R(PySpace.Get_RSite(index_site_1)).Get_Matrix(
                                                  PySpace.Get_OppoSpin_R(PySpace.Get_RSite(index_site_1))) *
                                          this->Get_Tensor_R(PySpace.Get_RSite(index_site_0)).Get_Matrix(
                                                  PySpace.Get_OppoSpin_R(PySpace.Get_RSite(index_site_0))) *
                                          (*ptr_Rmp1_R));
+            
             auto Val_WSp_RZ = arma::trace((*ptr_Lmm2_RZ) *
                                           this->Get_Tensor_RZ(PySpace.Get_RSite(index_site_1)).Get_Matrix(
                                                   PySpace.Get_OppoSpin_RZ(PySpace.Get_RSite(index_site_1))) *
@@ -894,7 +892,6 @@ void MCMPS::Class_Network::Measure_Heisenberg_Sym() {
             }
             temp_Matrix_0 = this->Get_Tensor_0(index_site_left).Get_Matrix(PySpace.Get_OppoSpin_0(index_site_left)) * temp_Matrix_0;
             temp_Matrix_Z = this->Get_Tensor_Z(index_site_left).Get_Matrix(PySpace.Get_OppoSpin_Z(index_site_left)) * temp_Matrix_Z;
-
             temp_Matrix_R = temp_Matrix_R * this->Get_Tensor_R(PySpace.Get_RSite(index_site_left)).Get_Matrix(
                     PySpace.Get_OppoSpin_R(PySpace.Get_RSite(index_site_left)));
             temp_Matrix_RZ = temp_Matrix_RZ * this->Get_Tensor_RZ(PySpace.Get_RSite(index_site_left)).Get_Matrix(
