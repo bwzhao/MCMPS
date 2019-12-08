@@ -9,8 +9,11 @@ MCMPS::Class_MPSTensor::Class_MPSTensor(MCMPS::type_BondDim _BondDim):
         Matrix_m(_BondDim, _BondDim)
 {
     //initialize
-    Matrix_p.randn();
-    Matrix_m.randn();
+    Matrix_p.randu();
+    Matrix_m.randu();
+
+    Matrix_p %= arma::sign(Matrix_p);
+    Matrix_m %= arma::sign(Matrix_m);
 }
 
 MCMPS::Class_Matrix &MCMPS::Class_MPSTensor::Get_Matrix(type_PyDegree _Which_Spin) {

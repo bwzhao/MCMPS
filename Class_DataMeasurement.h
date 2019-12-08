@@ -26,6 +26,10 @@ namespace MCMPS {
             return std::accumulate(Data.begin(), Data.end(), 0.) / Data.size();
         }
 
+        int Get_Size(){
+            return Data.size();
+        }
+
         void ClearValue(){
             Data.clear();
         }

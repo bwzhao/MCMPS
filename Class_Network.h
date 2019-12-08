@@ -73,8 +73,12 @@ namespace MCMPS{
 
     public:
         Class_Network() = default;
-        explicit Class_Network(type_NumSite _NumSite, type_BondDim _BondDim, int _Which_CPU);
+        explicit Class_Network(type_NumSite _NumSite, type_BondDim _BondDim, int _Which_CPU, std::string _TypeUpdate);
         ~Class_Network() = default;
+
+        // Determine if we need symmetric wavefunction
+        std::string TypeUpdate;
+        std::string Str_NameFile;
 
         // Calculate the pre-calculated matrices
         void Cal_L_0();
@@ -122,7 +126,12 @@ namespace MCMPS{
 
         // After several measurement, we can have one update of the tensor
         void Update_Tensor(int _Which_Step);
+
+        void Measure_Energy(int _Which_Step);
+        void Write_Energy(int _Which_Step);
         inline type_RealVal delta_k(int _Which_Step);
+
+        std::string Get_TypeUpdate();
     };
 }
 

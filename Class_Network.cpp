@@ -4,7 +4,8 @@
 
 #include "Class_Network.h"
 
-MCMPS::Class_Network::Class_Network(MCMPS::type_NumSite _NumSite, MCMPS::type_BondDim _BondDim, int _Which_CPU):
+MCMPS::Class_Network::Class_Network(MCMPS::type_NumSite _NumSite, MCMPS::type_BondDim _BondDim, int _Which_CPU, std::string _TypeUpdate):
+        TypeUpdate(_TypeUpdate),
         PySpace(_NumSite),
         Tensor_A(_BondDim),
         Tensor_B(_BondDim),
@@ -54,6 +55,13 @@ MCMPS::Class_Network::Class_Network(MCMPS::type_NumSite _NumSite, MCMPS::type_Bo
     for (const auto &which_key: MCMPS::VEC_NAME) {
         MeasureData.insert(std::make_pair(which_key, temp_Class_DataMeasurement));
     }
+
+    char temp_chars_nameclass[100];
+    snprintf(temp_chars_nameclass, 100, "Heisenberg_%d_%d_%d_",
+             _NumSite,
+             _BondDim,
+             _Which_CPU);
+    Str_NameFile = std::string(temp_chars_nameclass) + _TypeUpdate;
 }
 
 void MCMPS::Class_Network::Cal_L_0() {
@@ -356,7 +364,7 @@ void MCMPS::Class_Network::Update_Spin_Pair() {
                 PySpace.Flip_Spin(index_site_right);
                 Cal_L_0();
 //                Pre_Cal_R();
-                assert(arma::approx_equal(Array_L_0[index_site_right], Array_R_0[0], "absdiff", 0.0002));
+                assert(arma::approx_equal(Array_L_0[index_site_right], Array_R_0[0], "reldiff", 0.0002));
             }
             else{
                 Array_L_0[index_site_right] = Array_L_0[index_site_right - 1] *
@@ -364,14 +372,14 @@ void MCMPS::Class_Network::Update_Spin_Pair() {
                                 PySpace.Get_Spin_0(index_site_right));
                 Cal_R_0();
 //                Pre_Cal_L();
-                assert(arma::approx_equal(Array_L_0[index_site_right], Array_R_0[0], "absdiff", 0.0002));
+                assert(arma::approx_equal(Array_L_0[index_site_right], Array_R_0[0], "reldiff", 0.0002));
             }
         }
         else{
             Array_L_0[index_site_right] = Array_L_0[index_site_right - 1] *
                     this->Get_Tensor_0(index_site_right).Get_Matrix(PySpace.Get_Spin_0(index_site_right));
             Cal_R_0();
-            assert(arma::approx_equal(Array_L_0[index_site_right], Array_R_0[0], "absdiff", 0.0002));
+            assert(arma::approx_equal(Array_L_0[index_site_right], Array_R_0[0], "reldiff", 0.0002));
         }
     }
 }
@@ -536,15 +544,15 @@ void MCMPS::Class_Network::Update_Spin_Pair_Sym() {
                 Cal_R_R();
                 Cal_R_RZ();
 
-                assert(arma::approx_equal(Array_L_0[index_site_right], Array_R_0[0], "absdiff", 0.0002));
-                assert(arma::approx_equal(Array_L_Z[index_site_right], Array_R_Z[0], "absdiff", 0.0002));
-                assert(arma::approx_equal(Array_L_R[index_site_right], Array_R_R[0], "absdiff", 0.0002));
-                assert(arma::approx_equal(Array_L_RZ[index_site_right], Array_R_RZ[0], "absdiff", 0.0002));
+                assert(arma::approx_equal(Array_L_0[index_site_right], Array_R_0[0], "reldiff", 0.0002));
+                assert(arma::approx_equal(Array_L_Z[index_site_right], Array_R_Z[0], "reldiff", 0.0002));
+                assert(arma::approx_equal(Array_L_R[index_site_right], Array_R_R[0], "reldiff", 0.0002));
+                assert(arma::approx_equal(Array_L_RZ[index_site_right], Array_R_RZ[0], "reldiff", 0.0002));
 
-                assert(abs(Val_WS_0 - arma::trace(Array_R_0[index_site_left])) <= 0.00001);
-                assert(abs(Val_WS_Z - arma::trace(Array_R_Z[index_site_left])) <= 0.00001);
-                assert(abs(Val_WS_R - arma::trace(Array_R_R[index_site_left])) <= 0.00001);
-                assert(abs(Val_WS_RZ - arma::trace(Array_R_RZ[index_site_left])) <= 0.00001);
+                assert(abs((Val_WS_0 - arma::trace(Array_R_0[index_site_left]))/ Val_WS_0) <= 0.00001);
+                assert(abs((Val_WS_Z - arma::trace(Array_R_Z[index_site_left])) / Val_WS_Z) <= 0.00001);
+                assert(abs((Val_WS_R - arma::trace(Array_R_R[index_site_left])) / Val_WS_Z) <= 0.00001);
+                assert(abs((Val_WS_RZ - arma::trace(Array_R_RZ[index_site_left])) / Val_WS_RZ) <= 0.00001);
             }
             else{
                 // Flip back
@@ -572,15 +580,15 @@ void MCMPS::Class_Network::Update_Spin_Pair_Sym() {
                 Cal_L_R();
                 Cal_L_RZ();
 
-                assert(arma::approx_equal(Array_L_0[index_site_right], Array_R_0[0], "absdiff", 0.0002));
-                assert(arma::approx_equal(Array_L_Z[index_site_right], Array_R_Z[0], "absdiff", 0.0002));
-                assert(arma::approx_equal(Array_L_R[index_site_right], Array_R_R[0], "absdiff", 0.0002));
-                assert(arma::approx_equal(Array_L_RZ[index_site_right], Array_R_RZ[0], "absdiff", 0.0002));
+                assert(arma::approx_equal(Array_L_0[index_site_right], Array_R_0[0], "reldiff", 0.0002));
+                assert(arma::approx_equal(Array_L_Z[index_site_right], Array_R_Z[0], "reldiff", 0.0002));
+                assert(arma::approx_equal(Array_L_R[index_site_right], Array_R_R[0], "reldiff", 0.0002));
+                assert(arma::approx_equal(Array_L_RZ[index_site_right], Array_R_RZ[0], "reldiff", 0.0002));
 
-                assert(abs(Val_WS_0 - arma::trace(Array_R_0[index_site_left])) <= 0.00001);
-                assert(abs(Val_WS_Z - arma::trace(Array_R_Z[index_site_left])) <= 0.00001);
-                assert(abs(Val_WS_R - arma::trace(Array_R_R[index_site_left])) <= 0.00001);
-                assert(abs(Val_WS_RZ - arma::trace(Array_R_RZ[index_site_left])) <= 0.00001);
+                assert(abs((Val_WS_0 - arma::trace(Array_R_0[index_site_left]))/ Val_WS_0) <= 0.00001);
+                assert(abs((Val_WS_Z - arma::trace(Array_R_Z[index_site_left])) / Val_WS_Z) <= 0.00001);
+                assert(abs((Val_WS_R - arma::trace(Array_R_R[index_site_left])) / Val_WS_Z) <= 0.00001);
+                assert(abs((Val_WS_RZ - arma::trace(Array_R_RZ[index_site_left])) / Val_WS_RZ) <= 0.00001);
             }
         }
         else{
@@ -602,15 +610,15 @@ void MCMPS::Class_Network::Update_Spin_Pair_Sym() {
             Cal_L_R();
             Cal_L_RZ();
 
-            assert(arma::approx_equal(Array_L_0[index_site_right], Array_R_0[0], "absdiff", 0.0002));
-            assert(arma::approx_equal(Array_L_Z[index_site_right], Array_R_Z[0], "absdiff", 0.0002));
-            assert(arma::approx_equal(Array_L_R[index_site_right], Array_R_R[0], "absdiff", 0.0002));
-            assert(arma::approx_equal(Array_L_RZ[index_site_right], Array_R_RZ[0], "absdiff", 0.0002));
+            assert(arma::approx_equal(Array_L_0[index_site_right], Array_R_0[0], "reldiff", 0.0002));
+            assert(arma::approx_equal(Array_L_Z[index_site_right], Array_R_Z[0], "reldiff", 0.0002));
+            assert(arma::approx_equal(Array_L_R[index_site_right], Array_R_R[0], "reldiff", 0.0002));
+            assert(arma::approx_equal(Array_L_RZ[index_site_right], Array_R_RZ[0], "reldiff", 0.0002));
 
-            assert(abs(Val_WS_0 - arma::trace(Array_R_0[index_site_left])) <= 0.00001);
-            assert(abs(Val_WS_Z - arma::trace(Array_R_Z[index_site_left])) <= 0.00001);
-            assert(abs(Val_WS_R - arma::trace(Array_R_R[index_site_left])) <= 0.00001);
-            assert(abs(Val_WS_RZ - arma::trace(Array_R_RZ[index_site_left])) <= 0.00001);
+            assert(abs((Val_WS_0 - arma::trace(Array_R_0[index_site_left]))/ Val_WS_0) <= 0.00001);
+            assert(abs((Val_WS_Z - arma::trace(Array_R_Z[index_site_left])) / Val_WS_Z) <= 0.00001);
+            assert(abs((Val_WS_R - arma::trace(Array_R_R[index_site_left])) / Val_WS_Z) <= 0.00001);
+            assert(abs((Val_WS_RZ - arma::trace(Array_R_RZ[index_site_left])) / Val_WS_RZ) <= 0.00001);
         }
     }
 
@@ -654,9 +662,8 @@ void MCMPS::Class_Network::Update_Spin_Single() {
             ptr_Rmp1 = &Array_R_0[index_site_1];
         }
 
-        const auto temp_Lm = (*ptr_Lmm1) * this->Get_Tensor_0(index_site_0).Get_Matrix(
-                PySpace.Get_OppoSpin_0(index_site_0));
-        auto Val_WSp = arma::trace((temp_Lm *
+        auto Val_WSp = arma::trace(( (*ptr_Lmm1) * this->Get_Tensor_0(index_site_0).Get_Matrix(
+                PySpace.Get_OppoSpin_0(index_site_0)) *
                                     (*ptr_Rmp1)));
         auto temp_ratio = Val_WSp * Val_WSp / Val_WS_0 / Val_WS_0;
 
@@ -665,7 +672,8 @@ void MCMPS::Class_Network::Update_Spin_Single() {
             Val_WS_0 = Val_WSp;
             PySpace.Flip_Spin(index_site_0);
             PySpace.Flip_Spin(index_site_1);
-            Array_L_0[index_site_0] = temp_Lm;
+            Array_L_0[index_site_0] = (*ptr_Lmm1) * this->Get_Tensor_0(index_site_0).Get_Matrix(
+                    PySpace.Get_Spin_0(index_site_0));
         }
         else{
             Array_L_0[index_site_0] = (*ptr_Lmm1) * this->Get_Tensor_0(index_site_0).Get_Matrix(
@@ -673,7 +681,8 @@ void MCMPS::Class_Network::Update_Spin_Single() {
         }
     }
     Cal_R_0();
-    assert(arma::approx_equal(Array_L_0[PySpace.size() - 1], Array_R_0[0], "absdiff", 0.0002));
+
+    assert(arma::approx_equal(Array_L_0[PySpace.size() - 1], Array_R_0[0], "reldiff", 0.0002));
     // At the end of the update, both Array_L and Array_R have been calculated.
 }
 
@@ -764,7 +773,6 @@ void MCMPS::Class_Network::Measure_Heisenberg() {
         Which_D2_Matrix += Array_G_0[index_site].t() * (1. / Val_WS_0 * temp_ES);
     }
 }
-
 void MCMPS::Class_Network::Measure_Heisenberg_Sym() {
     // Measure the energy at current spin configuration
     MCMPS::type_RealVal temp_ES_Dia = 0.;
@@ -829,21 +837,21 @@ void MCMPS::Class_Network::Measure_Heisenberg_Sym() {
                                          this->Get_Tensor_0(index_site_1).Get_Matrix(
                                                  PySpace.Get_OppoSpin_0(index_site_1)) *
                                          (*ptr_Rmp2_0));
-            
+
             auto Val_WSp_Z = arma::trace((*ptr_Lmm1_Z) *
                                          this->Get_Tensor_Z(index_site_0).Get_Matrix(
                                                  PySpace.Get_OppoSpin_Z(index_site_0)) *
                                          this->Get_Tensor_Z(index_site_1).Get_Matrix(
                                                  PySpace.Get_OppoSpin_Z(index_site_1)) *
                                          (*ptr_Rmp2_Z));
-            
+
             auto Val_WSp_R = arma::trace((*ptr_Lmm2_R) *
                                          this->Get_Tensor_R(PySpace.Get_RSite(index_site_1)).Get_Matrix(
                                                  PySpace.Get_OppoSpin_R(PySpace.Get_RSite(index_site_1))) *
                                          this->Get_Tensor_R(PySpace.Get_RSite(index_site_0)).Get_Matrix(
                                                  PySpace.Get_OppoSpin_R(PySpace.Get_RSite(index_site_0))) *
                                          (*ptr_Rmp1_R));
-            
+
             auto Val_WSp_RZ = arma::trace((*ptr_Lmm2_RZ) *
                                           this->Get_Tensor_RZ(PySpace.Get_RSite(index_site_1)).Get_Matrix(
                                                   PySpace.Get_OppoSpin_RZ(PySpace.Get_RSite(index_site_1))) *
@@ -994,22 +1002,18 @@ void MCMPS::Class_Network::Measure_Ising() {
         Which_D2_Matrix += Array_G_0[index_site].t() * (1. / Val_WS_0 * temp_ES);
     }
 }
-
 void MCMPS::Class_Network::Update_Tensor(int _Which_Step) {
     // Update Each tensor
     auto Val_delta = delta_k(_Which_Step + 1);
     Tensor_A.Update_Tensor(Tensor_BinD1_A, Tensor_BinD2_A, Val_BinEnergy, Val_delta);
     Tensor_B.Update_Tensor(Tensor_BinD1_B, Tensor_BinD2_B, Val_BinEnergy, Val_delta);
 
-    std::cout << _Which_Step << "\t"
-    << Val_BinEnergy / this->PySpace.size() << "\t"
-    << Val_BinEnergy2 / this->PySpace.size() / this->PySpace.size() - std::pow(Val_BinEnergy / this->PySpace.size(), 2.) << "\t"
-    << std::endl;
+
 }
 
 MCMPS::type_RealVal MCMPS::Class_Network::delta_k(int _Which_Step) {
-    return DELTA0 * std::pow(_Which_Step, -DELTA_EXPONENT);
-//    return DELTA0 * std::pow(DELTA_Q, _Which_Step);
+//    return DELTA0 * std::pow(_Which_Step, -DELTA_EXPONENT);
+    return DELTA0 * std::pow(DELTA_Q, _Which_Step);
 }
 
 void MCMPS::Class_Network::CleanMeasure() {
@@ -1031,6 +1035,42 @@ void MCMPS::Class_Network::AveMeasure() {
     Tensor_BinD1_B *= 1./Num_Measure;
     Tensor_BinD2_A *= 1./Num_Measure;
     Tensor_BinD2_B *= 1./Num_Measure;
+}
+
+void MCMPS::Class_Network::Measure_Energy(int _Which_Step) {
+    MeasureData.at("E").AppendValue(Val_BinEnergy);
+    MeasureData.at("E^2").AppendValue(Val_BinEnergy2);
+}
+
+void MCMPS::Class_Network::Write_Energy(int _Which_Step) {
+    auto ave_E = MeasureData.at("E").Get_AveValue() / this->PySpace.size();
+    auto ave_E2 = MeasureData.at("E^2").Get_AveValue() / this->PySpace.size() / this->PySpace.size();
+    auto size = MeasureData.at("E").Get_Size();
+
+    std::cout << _Which_Step << "\t"
+              << ave_E << "\t"
+              << (ave_E2  - ave_E * ave_E) / size << "\t"
+              << std::endl;
+
+    // Outfile
+    std::ofstream outfile;
+    outfile.open(Str_NameFile + ".txt", std::ofstream::out | std::ofstream::app);
+    outfile.setf(std::ios::fixed);
+    outfile.precision(16);
+
+    outfile << _Which_Step << "\t"
+              << ave_E << "\t"
+              << (ave_E2 - ave_E * ave_E) / size << "\t"
+              << std::endl;
+
+    outfile.close();
+
+    MeasureData.at("E").ClearValue();
+    MeasureData.at("E^2").ClearValue();
+}
+
+std::string MCMPS::Class_Network::Get_TypeUpdate() {
+    return this->TypeUpdate;
 }
 
 
