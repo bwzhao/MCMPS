@@ -36,15 +36,15 @@ namespace MCMPS {
     constexpr type_IntVal P_0= 10;
     constexpr type_IntVal F_0= 100;
 
-    constexpr type_IntVal K_MAX = 20;
+    constexpr type_IntVal K_MAX = 30;
 
     const std::vector<std::string> VEC_NAME = {{"E", "E^2", "M"}};
 
     inline MCMPS::type_IntVal P_k(int _Which_Step) {
-        return P_0 * _Which_Step;
+        return (P_0) * _Which_Step;
     }
 
     inline MCMPS::type_IntVal F_k(int _Which_Step) {
-        return F_0 * _Which_Step;
+        return (F_0) * _Which_Step;
     }
 }

@@ -71,9 +71,15 @@ namespace MCMPS{
         // For measurements:
         std::map<std::string, MCMPS::Class_DataMeasurement> MeasureData;
 
+        // Parameter for the model
+        MCMPS::type_RealVal Val_J1;
+        MCMPS::type_RealVal Val_J2;
+
     public:
         Class_Network() = default;
-        explicit Class_Network(type_NumSite _NumSite, type_BondDim _BondDim, int _Which_CPU, std::string _TypeUpdate);
+        explicit Class_Network(type_NumSite _NumSite, type_BondDim _BondDim, int _Which_CPU, std::string _TypeUpdate,
+                               MCMPS::type_RealVal _Val_J1, MCMPS::type_RealVal _Val_J2,
+                               type_RealVal _Sign_Z, type_RealVal _Sign_R);
         ~Class_Network() = default;
 
         // Determine if we need symmetric wavefunction
@@ -112,13 +118,14 @@ namespace MCMPS{
         // Single update step for the spin configurations
         // This update will update two spins at a time. And it will conserve the total spin
         void Update_Spin_Pair();
-        void Update_Spin_Pair_Sym();
+        void Update_Spin_Pair_Sym(type_RealVal _Sign_Z, type_RealVal _Sign_R);
         // This update will just update one single spin
         void Update_Spin_Single();
 
         // Single Measurement step
         void Measure_Heisenberg();
         void Measure_Heisenberg_Sym();
+        void Measure_J1J2_Sym(type_RealVal _Sign_Z, type_RealVal _Sign_R);
         void Measure_Ising();
 
         void AveMeasure();
