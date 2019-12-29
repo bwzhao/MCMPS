@@ -60,7 +60,7 @@ MCMPS::Class_Network::Class_Network(MCMPS::type_NumSite _NumSite, MCMPS::type_Bo
     }
 
     char temp_chars_nameclass[100];
-    snprintf(temp_chars_nameclass, 100, "MPS_%d_%d_%d_%.1f_%.1f_%.0f_%.0f",
+    snprintf(temp_chars_nameclass, 100, "MPS_%d_%d_%d_%.1f_%.1f_%.0f_%.0f_",
              _NumSite,
              _BondDim,
              _Which_CPU,
@@ -204,7 +204,7 @@ MCMPS::Class_MPSTensor &MCMPS::Class_Network::Get_Tensor_Z(MCMPS::type_NumSite W
     }
 }
 MCMPS::Class_MPSTensor &MCMPS::Class_Network::Get_Tensor_R(MCMPS::type_NumSite Which_Site) {
-    if (PySpace.Get_RSite(Which_Site) % 2 == 0) {
+    if (Which_Site % 2 == 0) {
         return Tensor_A;
     }
     else{
@@ -212,7 +212,7 @@ MCMPS::Class_MPSTensor &MCMPS::Class_Network::Get_Tensor_R(MCMPS::type_NumSite W
     }
 }
 MCMPS::Class_MPSTensor &MCMPS::Class_Network::Get_Tensor_RZ(MCMPS::type_NumSite Which_Site) {
-    if (PySpace.Get_RSite(Which_Site) % 2 == 0){
+    if (Which_Site % 2 == 0) {
         return Tensor_A;
     }
     else{
@@ -237,7 +237,7 @@ MCMPS::Class_MPSTensor &MCMPS::Class_Network::Get_D1_Tensor_Z(MCMPS::type_NumSit
     }
 }
 MCMPS::Class_MPSTensor &MCMPS::Class_Network::Get_D1_Tensor_R(MCMPS::type_NumSite Which_Site) {
-    if (PySpace.Get_RSite(Which_Site) % 2 == 0) {
+    if (Which_Site % 2 == 0) {
         return Tensor_BinD1_A;
     }
     else{
@@ -245,7 +245,7 @@ MCMPS::Class_MPSTensor &MCMPS::Class_Network::Get_D1_Tensor_R(MCMPS::type_NumSit
     }
 }
 MCMPS::Class_MPSTensor &MCMPS::Class_Network::Get_D1_Tensor_RZ(MCMPS::type_NumSite Which_Site) {
-    if (PySpace.Get_RSite(Which_Site) % 2 == 0) {
+    if (Which_Site % 2 == 0) {
         return Tensor_BinD1_A;
     }
     else{
@@ -270,7 +270,7 @@ MCMPS::Class_MPSTensor &MCMPS::Class_Network::Get_D2_Tensor_Z(MCMPS::type_NumSit
     }
 }
 MCMPS::Class_MPSTensor &MCMPS::Class_Network::Get_D2_Tensor_R(MCMPS::type_NumSite Which_Site) {
-    if (PySpace.Get_RSite(Which_Site) % 2 == 0) {
+    if (Which_Site % 2 == 0) {
         return Tensor_BinD2_A;
     }
     else{
@@ -278,7 +278,7 @@ MCMPS::Class_MPSTensor &MCMPS::Class_Network::Get_D2_Tensor_R(MCMPS::type_NumSit
     }
 }
 MCMPS::Class_MPSTensor &MCMPS::Class_Network::Get_D2_Tensor_RZ(MCMPS::type_NumSite Which_Site) {
-    if (PySpace.Get_RSite(Which_Site) % 2 == 0) {
+    if (Which_Site % 2 == 0) {
         return Tensor_BinD2_A;
     }
     else{
@@ -1060,7 +1060,8 @@ void MCMPS::Class_Network::Measure_J1J2_Sym(type_RealVal _Sign_Z, type_RealVal _
                     ptr_Rmp2_Z = &this->Matrix_Id;
                     ptr_Lmm2_R = &this->Matrix_Id;
                     ptr_Lmm2_RZ = &this->Matrix_Id;
-                } else {
+                }
+                else {
                     auto index_site_2 = index_count + 2;
                     ptr_Rmp2_0 = &Array_R_0[index_site_2];
                     ptr_Rmp2_Z = &Array_R_Z[index_site_2];
@@ -1116,32 +1117,47 @@ void MCMPS::Class_Network::Measure_J1J2_Sym(type_RealVal _Sign_Z, type_RealVal _
             temp_ES_Dia += -MATELE_Heisenberg_DIA * Val_J1;
 
             // Off-Diagonal energy
-            auto temp_Matrix_0 = this->Get_Tensor_0(index_site_right).Get_Matrix(
-                    PySpace.Get_OppoSpin_0(index_site_right));
-            auto temp_Matrix_Z = this->Get_Tensor_Z(index_site_right).Get_Matrix(
-                    PySpace.Get_OppoSpin_Z(index_site_right));
-            auto temp_Matrix_R = this->Get_Tensor_R(PySpace.Get_RSite(index_site_right)).Get_Matrix(
-                    PySpace.Get_OppoSpin_R(PySpace.Get_RSite(index_site_right)));
-            auto temp_Matrix_RZ = this->Get_Tensor_RZ(PySpace.Get_RSite(index_site_right)).Get_Matrix(
-                    PySpace.Get_OppoSpin_RZ(PySpace.Get_RSite(index_site_right)));
+//            auto temp_Matrix_0 = this->Get_Tensor_0(index_site_right).Get_Matrix(
+//                    PySpace.Get_OppoSpin_0(index_site_right));
+//            auto temp_Matrix_Z = this->Get_Tensor_Z(index_site_right).Get_Matrix(
+//                    PySpace.Get_OppoSpin_Z(index_site_right));
+//            auto temp_Matrix_R = this->Get_Tensor_R(PySpace.Get_RSite(index_site_right)).Get_Matrix(
+//                    PySpace.Get_OppoSpin_R(PySpace.Get_RSite(index_site_right)));
+//            auto temp_Matrix_RZ = this->Get_Tensor_RZ(PySpace.Get_RSite(index_site_right)).Get_Matrix(
+//                    PySpace.Get_OppoSpin_RZ(PySpace.Get_RSite(index_site_right)));
+            auto temp_Matrix_0 = this->Matrix_Id;
+            auto temp_Matrix_Z = this->Matrix_Id;
+            auto temp_Matrix_R = this->Matrix_Id;
+            auto temp_Matrix_RZ = this->Matrix_Id;
 
-            for (MCMPS::type_NumSite index_count = 1; index_count != PySpace.size() - 1; ++index_count) {
+            for (MCMPS::type_NumSite index_count = 0; index_count != PySpace.size(); ++index_count) {
                 auto index_site = index_site_right - index_count;
-                temp_Matrix_0 =
-                        this->Get_Tensor_0(index_site).Get_Matrix(PySpace.Get_Spin_0(index_site)) * temp_Matrix_0;
-                temp_Matrix_Z =
-                        this->Get_Tensor_Z(index_site).Get_Matrix(PySpace.Get_Spin_Z(index_site)) * temp_Matrix_Z;
-                temp_Matrix_R = temp_Matrix_R *
-                                this->Get_Tensor_R(PySpace.Get_RSite(index_site)).Get_Matrix(PySpace.Get_Spin_R(PySpace.Get_RSite(index_site)));
-                temp_Matrix_RZ = temp_Matrix_RZ * this->Get_Tensor_RZ(PySpace.Get_RSite(index_site)).Get_Matrix(
-                        PySpace.Get_Spin_RZ(PySpace.Get_RSite(index_site)));
+                if (index_site != index_site_left && index_site != index_site_right){
+                    temp_Matrix_0 =
+                            this->Get_Tensor_0(index_site).Get_Matrix(PySpace.Get_Spin_0(index_site)) * temp_Matrix_0;
+                    temp_Matrix_Z =
+                            this->Get_Tensor_Z(index_site).Get_Matrix(PySpace.Get_Spin_Z(index_site)) * temp_Matrix_Z;
+                    temp_Matrix_R = temp_Matrix_R *
+                                    this->Get_Tensor_R(PySpace.Get_RSite(index_site)).Get_Matrix(PySpace.Get_Spin_R(PySpace.Get_RSite(index_site)));
+                    temp_Matrix_RZ = temp_Matrix_RZ * this->Get_Tensor_RZ(PySpace.Get_RSite(index_site)).Get_Matrix(
+                            PySpace.Get_Spin_RZ(PySpace.Get_RSite(index_site)));
+                }
+                else{
+                    temp_Matrix_0 = this->Get_Tensor_0(index_site).Get_Matrix(PySpace.Get_OppoSpin_0(index_site)) * temp_Matrix_0;
+                    temp_Matrix_Z = this->Get_Tensor_Z(index_site).Get_Matrix(PySpace.Get_OppoSpin_Z(index_site)) * temp_Matrix_Z;
+                    temp_Matrix_R = temp_Matrix_R * this->Get_Tensor_R(PySpace.Get_RSite(index_site)).Get_Matrix(
+                            PySpace.Get_OppoSpin_R(PySpace.Get_RSite(index_site)));
+                    temp_Matrix_RZ = temp_Matrix_RZ * this->Get_Tensor_RZ(PySpace.Get_RSite(index_site)).Get_Matrix(
+                            PySpace.Get_OppoSpin_RZ(PySpace.Get_RSite(index_site)));
+                }
+
             }
-            temp_Matrix_0 = this->Get_Tensor_0(index_site_left).Get_Matrix(PySpace.Get_OppoSpin_0(index_site_left)) * temp_Matrix_0;
-            temp_Matrix_Z = this->Get_Tensor_Z(index_site_left).Get_Matrix(PySpace.Get_OppoSpin_Z(index_site_left)) * temp_Matrix_Z;
-            temp_Matrix_R = temp_Matrix_R * this->Get_Tensor_R(PySpace.Get_RSite(index_site_left)).Get_Matrix(
-                    PySpace.Get_OppoSpin_R(PySpace.Get_RSite(index_site_left)));
-            temp_Matrix_RZ = temp_Matrix_RZ * this->Get_Tensor_RZ(PySpace.Get_RSite(index_site_left)).Get_Matrix(
-                    PySpace.Get_OppoSpin_RZ(PySpace.Get_RSite(index_site_left)));
+//            temp_Matrix_0 = this->Get_Tensor_0(index_site_left).Get_Matrix(PySpace.Get_OppoSpin_0(index_site_left)) * temp_Matrix_0;
+//            temp_Matrix_Z = this->Get_Tensor_Z(index_site_left).Get_Matrix(PySpace.Get_OppoSpin_Z(index_site_left)) * temp_Matrix_Z;
+//            temp_Matrix_R = temp_Matrix_R * this->Get_Tensor_R(PySpace.Get_RSite(index_site_left)).Get_Matrix(
+//                    PySpace.Get_OppoSpin_R(PySpace.Get_RSite(index_site_left)));
+//            temp_Matrix_RZ = temp_Matrix_RZ * this->Get_Tensor_RZ(PySpace.Get_RSite(index_site_left)).Get_Matrix(
+//                    PySpace.Get_OppoSpin_RZ(PySpace.Get_RSite(index_site_left)));
 
             auto Val_WSp = arma::trace(temp_Matrix_0) + _Sign_Z * arma::trace(temp_Matrix_Z) + _Sign_R * arma::trace(temp_Matrix_R) + _Sign_R * _Sign_Z * arma::trace(temp_Matrix_RZ);
             temp_ES_Off += Val_WSp / Val_WS * MATELE_Heisenbergy_OFF * Val_J1;
@@ -1321,6 +1337,7 @@ void MCMPS::Class_Network::Measure_J1J2_Sym(type_RealVal _Sign_Z, type_RealVal _
 
         Get_D1_Tensor_RZ(index_site).Get_Matrix(PySpace.Get_Spin_RZ(index_site)) += _Sign_R * _Sign_Z * Array_G_RZ[index_site].t() * (1. / Val_WS);
         Get_D2_Tensor_RZ(index_site).Get_Matrix(PySpace.Get_Spin_RZ(index_site)) += _Sign_R * _Sign_Z * Array_G_RZ[index_site].t() * (1. / Val_WS * temp_ES);
+
     }
 }
 
